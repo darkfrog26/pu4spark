@@ -4,9 +4,10 @@ import org.apache.logging.log4j.{LogManager, Logger}
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.{ProbabilisticClassificationModel, ProbabilisticClassifier}
 import org.apache.spark.ml.feature.StringIndexer
-import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.ml.linalg.Vector
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions.udf
-import org.apache.spark.sql.{DataFrame, UserDefinedFunction}
 
 /**
   * Modified Positive-Unlabeled learning algorithm; main idea is to gradually refine set of positive examples<br>
@@ -54,7 +55,7 @@ class GradualReductionPULearner[
 
     do {
       //learn new classifier
-      val curLabDF = curDF.filter(curDF(curLabel) !== GradualReductionPULearner.undefLabel)
+      val curLabDF = curDF.filter(curDF(curLabel) =!= GradualReductionPULearner.undefLabel)
       val newLabelIndexer = new StringIndexer()
           .setInputCol(curLabel)
           .setOutputCol(ProbabilisticClassifierConfig.labelName)

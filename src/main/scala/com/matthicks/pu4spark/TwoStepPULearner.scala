@@ -3,9 +3,10 @@ package com.matthicks.pu4spark
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.{ProbabilisticClassificationModel, ProbabilisticClassifier}
 import org.apache.spark.ml.feature.{StringIndexer, VectorIndexer}
-import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.ml.linalg.Vector
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.expressions.UserDefinedFunction
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.{DataFrame, UserDefinedFunction}
 
 /**
   * Performs PU learning in a 2-step manner:

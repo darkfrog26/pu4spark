@@ -2,6 +2,8 @@
 A library for [Positive-Unlabeled Learning](https://en.wikipedia.org/wiki/One-class_classification#PU_learning)
 for Apache Spark MLlib (ml package)
 
+Forked from the original work done at https://github.com/ispras/pu4spark
+
 ## Implemented algorithms
 
 ### Traditional PU
@@ -20,11 +22,7 @@ Information Processing & Management, 51(4), 433-443.
 
 ## Requirements
 
-Spark 1.5+
-
-(Spark 2+ was not tested,
-but should work if replace `SparkContext` by `SparkSession`
-and `mllib.linalg.Vector` by `ml.linalg.Vector`)
+Spark 2+
 
 ## Linking
 
@@ -34,31 +32,31 @@ Add the following lines depending on your build system.
 ### Gradle
 
 ```gradle
-compile 'ru.ispras:pu4spark:0.2'
+compile 'com.matthicks:pu4spark:0.3'
 ```
 
 ### Maven
 
 ```xml
 <dependency>
-    <groupId>ru.ispras</groupId>
+    <groupId>com.matthicks</groupId>
     <artifactId>pu4spark</artifactId>
-    <version>0.2</version>
+    <version>0.3</version>
 </dependency>
 ```
 
 ### SBT
 
 ```
-libraryDependencies += "ru.ispras" % "pu4spark" % "0.2"
+libraryDependencies += "com.matthicks" % "pu4spark" % "0.3"
 ```
 
 ## Building from Sources
 
-Build library with gradle:
+Build library with SBT:
 
 ```shell
-./gradlew jar
+sbt publishLocal
 ```
 
 ## Usage example
