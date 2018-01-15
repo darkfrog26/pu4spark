@@ -1,19 +1,4 @@
-/*
- * Copyright 2016 ISP RAS
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package ru.ispras.pu4spark
+package com.matthicks.pu4spark
 
 import org.apache.spark.sql.DataFrame
 
@@ -38,18 +23,4 @@ trait PositiveUnlabeledLearner {
              labelColumnName: String = "featuresCol",
              featuresColumnName: String = "labelCol",
              finalLabel: String = "finalLabel"): DataFrame
-}
-
-/**
-  * Subclasses should be case classes in order to be easily serializable (e.g. to JSON)
-  */
-trait PositiveUnlabeledLearnerConfig {
-  def build(): PositiveUnlabeledLearner
-}
-
-/**
-  * Needed for serialization by json4s (should be passed to org.json4s.ShortTypeHints)
-  */
-object PositiveUnlabeledLearnerConfig {
-  val subclasses = List(classOf[TraditionalPULearnerConfig], classOf[GradualReductionPULearnerConfig])
 }

@@ -1,26 +1,11 @@
-/*
- * Copyright 2016 ISP RAS
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package ru.ispras.pu4spark
+package com.matthicks.pu4spark
 
 import org.apache.spark.ml.Pipeline
 import org.apache.spark.ml.classification.{ProbabilisticClassificationModel, ProbabilisticClassifier}
 import org.apache.spark.ml.feature.{StringIndexer, VectorIndexer}
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{DataFrame, UserDefinedFunction}
 
 /**
   * Performs PU learning in a 2-step manner:
@@ -38,7 +23,7 @@ abstract class TwoStepPULearner[
   /**
     * Extracts probability instead of binary prediction
     */
-  val getPOne = udf((v: Vector) => v(1))
+  val getPOne: UserDefinedFunction = udf((v: Vector) => v(1))
 
   /**
     * Train binary classifier by considering all unlabeled data as negative data,

@@ -1,27 +1,12 @@
-/*
- * Copyright 2016 ISP RAS
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package ru.ispras.pu4spark
+package com.matthicks.pu4spark
 
 import org.apache.logging.log4j.LogManager
 import org.apache.spark.ml.Pipeline
-import org.apache.spark.ml.classification.{LogisticRegressionModel, ProbabilisticClassificationModel, ProbabilisticClassifier}
+import org.apache.spark.ml.classification.{ProbabilisticClassificationModel, ProbabilisticClassifier}
 import org.apache.spark.ml.feature.StringIndexer
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.functions.udf
+import org.apache.spark.sql.{DataFrame, UserDefinedFunction}
 
 /**
   * Original Positive-Unlabeled learning algorithm; firstly proposed in
@@ -94,35 +79,23 @@ class TraditionalPULearner[
     }
     curDF
   }
-}
 
-private class RelNegConfidenceThresholdAdder(threshold: Double) extends Serializable {
-  def binarize(probPred: Double, prevLabel: Int): Int = if (prevLabel == 0) { //i.e. unlabeled
-    if (probPred < threshold) {
-      TraditionalPULearner.relNegLabel
+  class RelNegConfidenceThresholdAdder(threshold: Double) extends Serializable {
+    def binarize(probPred: Double, prevLabel: Int): Int = if (prevLabel == 0) { //i.e. unlabeled
+      if (probPred < threshold) {
+        TraditionalPULearner.relNegLabel
+      } else {
+        TraditionalPULearner.undefLabel
+      }
     } else {
-      TraditionalPULearner.undefLabel
+      prevLabel // keep as it was (1 or -1)
     }
-  } else {
-    prevLabel // keep as it was (1 or -1)
-  }
 
-  val binarizeUDF = udf(binarize(_: Double, _: Int))
+    val binarizeUDF: UserDefinedFunction = udf(binarize(_: Double, _: Int))
+  }
 }
 
 object TraditionalPULearner {
-  val relNegLabel = -1
-  val undefLabel = 0
-}
-
-case class TraditionalPULearnerConfig(relNegThreshold: Double = 0.5,
-                                      maxIters: Int = 1,
-                                      classifierConfig: ProbabilisticClassifierConfig = LogisticRegressionConfig()
-                                     ) extends PositiveUnlabeledLearnerConfig {
-  override def build(): PositiveUnlabeledLearner = {
-    classifierConfig match {
-      case lrc: LogisticRegressionConfig => new TraditionalPULearner(relNegThreshold, maxIters, lrc.build())
-      case rfc: RandomForestConfig => new TraditionalPULearner(relNegThreshold, maxIters, rfc.build())
-    }
-  }
+  val relNegLabel: Int = -1
+  val undefLabel: Int = 0
 }
